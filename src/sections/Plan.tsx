@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { BookOpen, Briefcase, CheckCircle2, CircleAlert, GraduationCap, Plus, RotateCcw, Sparkles, Trash2, UserRound } from "lucide-react";
+import { BookOpen, Briefcase, CheckCircle2, ChevronDown, CircleAlert, GraduationCap, Plus, RotateCcw, Search, Sparkles, Trash2, UserRound, X } from "lucide-react";
 import { gbp, useLang, type L } from "../i18n";
-import { COURSES, courseById, type CourseId } from "../data/courses";
+import { COURSES, GROUPS, courseById, matchesCourse, type CourseId } from "../data/courses";
 import { CAREERS, careerById } from "../data/careers";
-import { BOARDS, GCSE_QUALS, QUALS, SUBJECTS, subjectName, type SubjectId } from "../data/subjects";
+import { BOARDS, GCSE_QUALS, OFTEN_NOT_COUNTED, QUALS, SUBJECTS, subjectName, type SubjectId } from "../data/subjects";
 import { UNIVERSITIES, type University } from "../data/universities";
 import { EMPTY_PROFILE, clearProfile, loadProfile, saveProfile, type FeeType, type Profile, type Region, type Setting, type SubjectRow } from "../lib/profile";
 import { coursesToShow, gcseSummary, offers, recommend, scoreToGrades, studentScore, suggestALevels, type Band, type CourseResult } from "../lib/recommend";
@@ -249,13 +249,7 @@ export default function Plan({ openUni }: { openUni: (id: string) => void }) {
 
           <StepCard n={p.stage === "sixth" ? 4 : 3} icon={Sparkles} title={t({ en: "What interests you?", zh: "你对什么感兴趣？" })}>
             <p className="mb-2 text-sm text-slate-500">{t({ en: "Pick up to 4 courses — or leave empty and we'll suggest some.", zh: "最多选 4 个专业，也可以不选，我们会根据成绩推荐。" })}</p>
-            <div className="flex flex-wrap gap-2">
-              {COURSES.map((c) => (
-                <ToggleChip key={c.id} on={p.interests.includes(c.id)} onClick={() => set({ interests: toggle(p.interests, c.id, 4) })}>
-                  {t(c.name)}
-                </ToggleChip>
-              ))}
-            </div>
+            <CoursePicker selected={p.interests} onToggle={(id) => set({ interests: toggle(p.interests, id, 4) })} />
             <p className="mb-2 mt-5 text-sm text-slate-500">{t({ en: "Any careers in mind? (optional)", zh: "有想做的职业吗？（可选）" })}</p>
             <div className="flex flex-wrap gap-2">
               {CAREERS.map((c) => (
@@ -353,6 +347,14 @@ function Summary({ p, score, gcse }: { p: Profile; score: number | null; gcse: R
     if (gcse.english !== null && gcse.english < 4)
       notes.push({ tone: "amber", text: { en: "Most universities need at least a 4 in GCSE English.", zh: "大多数大学要求 GCSE 英语至少 4 分。" } });
   }
+  if (p.stage === "sixth" && p.subjects.some((x) => OFTEN_NOT_COUNTED.includes(x.subject)))
+    notes.push({
+      tone: "amber",
+      text: {
+        en: "Some universities don't count Thinking Skills or Global Perspectives as one of your three A-levels — check each course page.",
+        zh: "部分大学不把思维技能或全球视野算作三门 A-Level 之一，请查看各专业页面。",
+      },
+    });
   if (p.stage === "sixth" && p.qual !== "ib" && p.subjects.length > 0 && p.subjects.length < 3)
     notes.push({ tone: "amber", text: { en: "Add at least three subjects to see how your grades compare.", zh: "请至少添加三门科目，才能比较你的成绩。" } });
 
@@ -363,7 +365,7 @@ function Summary({ p, score, gcse }: { p: Profile; score: number | null; gcse: R
         <div className="rounded-xl bg-white p-3 shadow-sm">
           <div className="text-xs text-slate-500">{t({ en: "Predicted grades (A-level equivalent)", zh: "预估成绩（折合 A-Level）" })}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">{score !== null ? scoreToGrades(score) : "—"}</div>
-          {score !== null && p.qual !== "alevel" && p.qual !== "ial" && (
+          {score !== null && p.qual !== "alevel" && p.qual !== "cie" && p.qual !== "ial" && (
             <div className="text-xs text-slate-500">{t({ en: "Rough conversion — check each course", zh: "粗略换算，请以专业要求为准" })}</div>
           )}
         </div>
@@ -561,6 +563,74 @@ function UniStrip({ items, openUni }: { items: { uni: University; offer: number;
           </div>
         </button>
       ))}
+    </div>
+  );
+}
+
+function CoursePicker({ selected, onToggle }: { selected: CourseId[]; onToggle: (id: CourseId) => void }) {
+  const { t } = useLang();
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
+  const searching = q.trim().length > 0;
+  return (
+    <div className="space-y-3">
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {selected.map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => onToggle(id)}
+              className="flex min-h-[40px] items-center gap-1 rounded-full bg-blue-600 px-3 text-sm font-medium text-white"
+            >
+              {t(courseById(id).name)} <X size={14} aria-label={t({ en: "remove", zh: "移除" })} />
+            </button>
+          ))}
+        </div>
+      )}
+      <label className="relative block">
+        <span className="sr-only">{t({ en: "Search courses", zh: "搜索专业" })}</span>
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t({ en: `Search ${COURSES.length} courses, e.g. real estate`, zh: `搜索 ${COURSES.length} 个专业，例如 real estate` })}
+          className="min-h-[44px] w-full rounded-xl border border-slate-300 pl-9 pr-3 text-base"
+        />
+      </label>
+      <div className="divide-y divide-slate-100 rounded-xl border border-slate-200">
+        {GROUPS.filter((g) => g.id !== "all").map((g) => {
+          const items = COURSES.filter((c) => c.group === g.id && matchesCourse(c, q));
+          if (items.length === 0) return null;
+          const isOpen = searching || open === g.id;
+          const picked = items.filter((c) => selected.includes(c.id)).length;
+          return (
+            <div key={g.id}>
+              <button
+                type="button"
+                onClick={() => setOpen(isOpen && !searching ? null : g.id)}
+                aria-expanded={isOpen}
+                className="flex min-h-[44px] w-full items-center justify-between px-3 text-left text-sm font-medium text-slate-700"
+              >
+                <span>
+                  {t(g.label)} <span className="text-slate-400">({items.length})</span>
+                  {picked > 0 && <span className="ml-2 rounded-full bg-blue-100 px-2 text-xs text-blue-700">{picked}</span>}
+                </span>
+                <ChevronDown size={16} className={`transition ${isOpen ? "rotate-180" : ""}`} />
+              </button>
+              {isOpen && (
+                <div className="flex flex-wrap gap-2 px-3 pb-3">
+                  {items.map((c) => (
+                    <ToggleChip key={c.id} on={selected.includes(c.id)} onClick={() => onToggle(c.id)}>
+                      {t(c.name)}
+                    </ToggleChip>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

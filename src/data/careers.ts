@@ -164,6 +164,60 @@ export const CAREERS: Career[] = [
     route: { en: "No set route — many universities have incubators and start-up funding for students.", zh: "没有固定路线，很多大学为学生提供孵化器和创业资金。" },
     courses: ["business", "cs", "engineering", "art"],
   },
+  {
+    id: "planner",
+    name: { en: "Town planner / chartered surveyor", zh: "城市规划师 / 特许测量师" },
+    blurb: { en: "Shape how towns grow, or value, develop and manage property.", zh: "规划城镇发展，或评估、开发和管理房地产。" },
+    route: {
+      en: "Planning: RTPI-accredited degree (often a 4-year integrated master's) → chartered membership. Surveying: RICS-accredited degree → APC assessment.",
+      zh: "规划：RTPI 认证学位（常为 4 年本硕连读）→ 特许会员。测量：RICS 认证学位 → APC 考核。",
+    },
+    courses: ["planning", "geography", "civil", "architecture", "economics"],
+    apprenticeship: { en: "Planning and surveying degree apprenticeships are available.", zh: "规划和测量都有学位学徒项目。" },
+  },
+  {
+    id: "ahp",
+    name: { en: "Allied health professional", zh: "医疗相关专业人员" },
+    blurb: { en: "Physiotherapist, radiographer, midwife, optometrist, OT, speech therapist, dietitian…", zh: "物理治疗师、放射技师、助产士、视光师、职业治疗师、言语治疗师、营养师等。" },
+    route: { en: "Approved degree (3–4 years) → register with the HCPC, NMC (midwives) or GOC (optometrists).", zh: "认证学位（3–4 年）→ 在 HCPC、NMC（助产）或 GOC（视光）注册。" },
+    courses: ["physio", "radiography", "midwifery", "optometry", "ot", "slt", "dietetics"],
+    apprenticeship: { en: "Some NHS trusts offer degree apprenticeships in these professions.", zh: "部分 NHS 机构提供这些职业的学位学徒项目。" },
+  },
+  {
+    id: "social_worker",
+    name: { en: "Social worker", zh: "社会工作者" },
+    blurb: { en: "Protect and support children, families and vulnerable adults.", zh: "保护和支持儿童、家庭及弱势成人。" },
+    route: { en: "Social Work degree (or a postgraduate route) → register with Social Work England / the relevant UK regulator.", zh: "社会工作学位（或研究生路线）→ 在 Social Work England 或相应机构注册。" },
+    courses: ["socialwork", "sociology", "psychology", "criminology", "socialpolicy"],
+  },
+  {
+    id: "heritage",
+    name: { en: "Museums, heritage & archaeology", zh: "博物馆、文化遗产与考古" },
+    blurb: { en: "Curate collections, run heritage sites or dig up the past.", zh: "策展、管理文化遗产地，或从事考古发掘。" },
+    route: { en: "Relevant degree + volunteering experience; a master's is common for curatorial roles.", zh: "相关学位 + 志愿经历，策展类岗位常需硕士。" },
+    courses: ["archaeology", "histart", "history", "classics", "anthropology"],
+  },
+  {
+    id: "actuary",
+    name: { en: "Actuary", zh: "精算师" },
+    blurb: { en: "Measure financial risk for insurers, pension funds and banks.", zh: "为保险公司、养老基金和银行衡量金融风险。" },
+    route: { en: "Maths-heavy degree → graduate role while taking IFoA professional exams (several years).", zh: "数学类学位 → 入职并参加 IFoA 精算考试（需数年）。" },
+    courses: ["actuarial", "maths", "stats", "economics"],
+  },
+  {
+    id: "environment",
+    name: { en: "Environmental & conservation work", zh: "环境与保护工作" },
+    blurb: { en: "Environmental consultancy, conservation, climate policy and sustainability.", zh: "环境咨询、自然保护、气候政策与可持续发展。" },
+    route: { en: "Science or geography degree + practical experience; a master's helps for specialist roles.", zh: "理科或地理学位 + 实践经验，专业岗位读硕士更有优势。" },
+    courses: ["envsci", "ecology", "geography", "earth", "zoology", "marine"],
+  },
+  {
+    id: "creative_arts",
+    name: { en: "Performer, musician or film-maker", zh: "表演者、音乐人或电影人" },
+    blurb: { en: "Careers on stage, screen, in music or behind the camera.", zh: "在舞台、银幕、音乐领域或镜头背后工作。" },
+    route: { en: "No single route — build a portfolio and network; many work freelance.", zh: "没有固定路线，需要积累作品和人脉，很多人是自由职业。" },
+    courses: ["music", "drama", "film", "creative", "fashion", "design"],
+  },
 ];
 
 export const careerById = (id: string) => CAREERS.find((c) => c.id === id);

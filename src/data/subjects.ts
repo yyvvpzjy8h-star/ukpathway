@@ -5,7 +5,8 @@ export type SubjectId =
   | "economics" | "business" | "accounting" | "psychology" | "sociology" | "politics" | "law"
   | "history" | "geography" | "english_lit" | "english_lang" | "religious_studies" | "philosophy" | "classics"
   | "french" | "spanish" | "german" | "chinese" | "other_language"
-  | "art" | "design_tech" | "music" | "drama" | "media" | "pe" | "environmental";
+  | "art" | "design_tech" | "music" | "drama" | "media" | "pe" | "environmental"
+  | "thinking_skills" | "global_perspectives" | "info_tech" | "marine_science" | "travel_tourism";
 
 export const SUBJECTS: { id: SubjectId; name: L }[] = [
   { id: "maths", name: { en: "Mathematics", zh: "数学" } },
@@ -39,8 +40,16 @@ export const SUBJECTS: { id: SubjectId; name: L }[] = [
   { id: "drama", name: { en: "Drama & Theatre", zh: "戏剧" } },
   { id: "media", name: { en: "Media / Film Studies", zh: "媒体 / 电影" } },
   { id: "pe", name: { en: "Physical Education", zh: "体育" } },
-  { id: "environmental", name: { en: "Environmental Science", zh: "环境科学" } },
+  { id: "environmental", name: { en: "Environmental Science / Management", zh: "环境科学 / 环境管理" } },
+  { id: "info_tech", name: { en: "Information Technology", zh: "信息技术" } },
+  { id: "marine_science", name: { en: "Marine Science (CIE)", zh: "海洋科学（CIE）" } },
+  { id: "travel_tourism", name: { en: "Travel & Tourism (CIE)", zh: "旅游（CIE）" } },
+  { id: "thinking_skills", name: { en: "Thinking Skills (CIE)", zh: "思维技能（CIE）" } },
+  { id: "global_perspectives", name: { en: "Global Perspectives & Research (CIE)", zh: "全球视野与研究（CIE）" } },
 ];
+
+// Subjects some universities don't count among your three main A-levels.
+export const OFTEN_NOT_COUNTED: SubjectId[] = ["thinking_skills", "global_perspectives"];
 
 export const subjectName = (id: SubjectId) => SUBJECTS.find((s) => s.id === id)!.name;
 
@@ -52,7 +61,7 @@ export const ESSAY_SUBJECTS: SubjectId[] = [
 
 // ---------- Qualifications & exam boards ----------
 
-export type QualId = "alevel" | "ial" | "ib" | "btec" | "scottish";
+export type QualId = "alevel" | "cie" | "ial" | "ib" | "btec" | "scottish";
 export type GcseQualId = "gcse" | "igcse";
 
 export type Board = { id: string; name: string; info: L; url: string };
@@ -134,7 +143,8 @@ export const BOARDS: Record<string, Board> = {
 
 export const QUALS: { id: QualId; name: L; boards: string[]; grades: string[] }[] = [
   { id: "alevel", name: { en: "A-levels (UK)", zh: "A-Level（英国）" }, boards: ["aqa", "edexcel", "ocr", "eduqas", "ccea"], grades: ["A*", "A", "B", "C", "D", "E"] },
-  { id: "ial", name: { en: "International A-levels", zh: "国际 A-Level" }, boards: ["cie", "pearson_intl", "oxfordaqa"], grades: ["A*", "A", "B", "C", "D", "E"] },
+  { id: "cie", name: { en: "Cambridge International A-levels (CIE)", zh: "剑桥国际 A-Level（CIE）" }, boards: ["cie"], grades: ["A*", "A", "B", "C", "D", "E"] },
+  { id: "ial", name: { en: "Pearson Edexcel International / OxfordAQA A-levels", zh: "爱德思国际 / OxfordAQA A-Level" }, boards: ["pearson_intl", "oxfordaqa"], grades: ["A*", "A", "B", "C", "D", "E"] },
   { id: "ib", name: { en: "IB Diploma", zh: "IB 文凭" }, boards: ["ib"], grades: ["7", "6", "5", "4", "3", "2", "1"] },
   { id: "btec", name: { en: "BTEC Nationals", zh: "BTEC" }, boards: ["btec"], grades: ["D*", "D", "M", "P"] },
   { id: "scottish", name: { en: "Scottish Highers", zh: "苏格兰 Highers" }, boards: ["sqa"], grades: ["A", "B", "C", "D"] },

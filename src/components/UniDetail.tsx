@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { CircleCheck, CircleMinus, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CircleCheck, CircleMinus, ExternalLink, Search, X } from "lucide-react";
 import { gbp, useLang, type L } from "../i18n";
-import { COURSES } from "../data/courses";
+import { COURSES, GROUPS, matchesCourse, type CourseId } from "../data/courses";
+import { EXAMPLE_DEGREES, ucasSearchUrl } from "../data/availability";
 import { TAGS, homeFeeFor, photoPage, uniById, type University } from "../data/universities";
 import { offers, scoreToGrades } from "../lib/recommend";
 import { ExtLink, FeeStatusPill, Pill, UniPhoto } from "./ui";
@@ -33,7 +34,7 @@ export function offerRange(u: University) {
   return u.offerMin === u.offerMax ? scoreToGrades(u.offerMax) : `${scoreToGrades(u.offerMax)} – ${scoreToGrades(u.offerMin)}`;
 }
 
-export default function UniDetail({ id, onClose }: { id: string; onClose: () => void }) {
+export default function UniDetail({ id, onClose, onOpenCourse }: { id: string; onClose: () => void; onOpenCourse: (c: CourseId) => void }) {
   const { t } = useLang();
   const u = uniById(id);
 
@@ -143,17 +144,7 @@ export default function UniDetail({ id, onClose }: { id: string; onClose: () => 
             </div>
           </dl>
 
-          <div>
-            <h3 className="font-semibold text-slate-900">{t({ en: "Course areas on our list", zh: "本站收录的专业方向" })}</h3>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {offered.map((c) => (
-                <Pill key={c.id}>{t(c.name)}</Pill>
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-slate-500">
-              {t({ en: "Broad subject areas only — use the university's course search for exact degrees.", zh: "这里只列出大类方向，具体学位请用学校官网的课程搜索。" })}
-            </p>
-          </div>
+          <CourseList u={u} offered={offered} onOpenCourse={onOpenCourse} />
 
           <div className="flex flex-wrap gap-x-6 border-t border-slate-100 pt-3">
             <ExtLink href={u.website}>{t({ en: "University website", zh: "学校官网" })}</ExtLink>
@@ -170,6 +161,70 @@ function Fact({ label, value }: { label: string; value: string }) {
     <div>
       <dt className="font-semibold text-slate-700">{label}</dt>
       <dd className="mt-0.5 text-slate-600">{value}</dd>
+    </div>
+  );
+}
+
+function CourseList({ u, offered, onOpenCourse }: { u: University; offered: typeof COURSES; onOpenCourse: (c: CourseId) => void }) {
+  const { t } = useLang();
+  const [q, setQ] = useState("");
+  const shown = offered.filter((c) => matchesCourse(c, q));
+  const examples = EXAMPLE_DEGREES.filter((e) => e.uni === u.id);
+  return (
+    <div>
+      <h3 className="font-semibold text-slate-900">{t({ en: `Subjects at ${u.name} (${offered.length})`, zh: `${u.zhName}开设的专业方向（${offered.length} 个）` })}</h3>
+      <label className="relative mt-2 block">
+        <span className="sr-only">{t({ en: "Search subjects", zh: "搜索专业" })}</span>
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t({ en: "Search, e.g. real estate…", zh: "搜索，例如 real estate…" })}
+          className="min-h-[44px] w-full rounded-xl border border-slate-300 pl-9 pr-3 text-base"
+        />
+      </label>
+      <div className="mt-3 space-y-3">
+        {GROUPS.filter((g) => g.id !== "all").map((g) => {
+          const items = shown.filter((c) => c.group === g.id);
+          if (items.length === 0) return null;
+          return (
+            <div key={g.id}>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{t(g.label)}</div>
+              <div className="flex flex-wrap gap-1.5">
+                {items.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => onOpenCourse(c.id)}
+                    className="min-h-[36px] rounded-full border border-slate-200 bg-white px-3 text-sm text-slate-700 hover:border-blue-400 hover:text-blue-700"
+                  >
+                    {t(c.name)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+        {shown.length === 0 && <p className="text-sm text-slate-500">{t({ en: "Not in our list for this university.", zh: "本站这所学校没有匹配的专业。" })}</p>}
+      </div>
+      {examples.length > 0 && (
+        <div className="mt-4 rounded-xl bg-slate-50 p-3 text-sm">
+          <div className="font-semibold text-slate-800">{t({ en: "Example degrees (checked)", zh: "具体学位示例（已核实）" })}</div>
+          <ul className="mt-1">
+            {examples.map((e) => (
+              <li key={e.url}>
+                <ExtLink href={e.url}>{e.title}</ExtLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p className="mt-3 text-sm">
+        <a href={ucasSearchUrl(q ? `${q} ${u.name}` : u.name)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center gap-1 font-medium text-blue-700 hover:underline">
+          {t({ en: `See every degree at ${u.name} on UCAS`, zh: `在 UCAS 查看${u.zhName}的全部学位` })} <ExternalLink size={14} />
+        </a>
+      </p>
+      <p className="text-xs text-slate-500">{t({ en: "Tap a subject to compare it across universities. Our list groups degrees into broad areas and may miss some.", zh: "点击专业可在各大学之间对比。本站按大类归纳，可能有遗漏。" })}</p>
     </div>
   );
 }

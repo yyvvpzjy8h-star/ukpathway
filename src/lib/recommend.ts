@@ -1,5 +1,6 @@
 import { COURSES, SUBJECT_TO_COURSES, courseById, type Course, type CourseId, type Req } from "../data/courses";
 import { careerById } from "../data/careers";
+import { AVAILABILITY, OFFER_OVERRIDES } from "../data/availability";
 import { gcsePoints, type SubjectId } from "../data/subjects";
 import { UNIVERSITIES, homeFeeFor, type University } from "../data/universities";
 import type { FeeType, Profile } from "./profile";
@@ -70,11 +71,12 @@ export function checkReqs(course: Course, subjects: SubjectId[]): ReqCheck[] {
 }
 
 export function offers(u: University, c: Course) {
-  if (c.specialist) return u.specialist.includes(c.id);
-  return !u.noCourses.includes(c.id);
+  return AVAILABILITY[u.id]?.includes(c.id) ?? false;
 }
 
 export function offerFor(u: University, c: Course): number {
+  const checked = OFFER_OVERRIDES[u.id]?.[c.id];
+  if (checked !== undefined) return checked;
   switch (c.competitiveness) {
     case "top":
       return u.offerMax;

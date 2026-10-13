@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { EMPTY_PROFILE, type Profile } from "./profile";
 import { bandFor, checkReqs, offers, recommend, scoreToGrades, studentScore } from "./recommend";
-import { courseById } from "../data/courses";
-import { uniById } from "../data/universities";
+import { COURSES, courseById, matchesCourse } from "../data/courses";
+import { UNIVERSITIES, uniById } from "../data/universities";
 
 const sixth = (subjects: [string, string][], extra: Partial<Profile> = {}): Profile => ({
   ...EMPTY_PROFILE,
@@ -15,6 +15,9 @@ describe("studentScore", () => {
   it("adds the best three A-level grades", () => {
     expect(studentScore(sixth([["maths", "A*"], ["physics", "A"], ["chemistry", "A"], ["history", "B"]]))).toBe(10);
     expect(scoreToGrades(10)).toBe("A*AA");
+  });
+  it("scores Cambridge International A-levels like A-levels", () => {
+    expect(studentScore(sixth([["maths", "A*"], ["physics", "A*"], ["chemistry", "A"]], { qual: "cie" }))).toBe(11);
   });
   it("needs three subjects", () => {
     expect(studentScore(sixth([["maths", "A*"], ["physics", "A"]]))).toBeNull();
@@ -42,6 +45,13 @@ describe("course availability and requirements", () => {
     expect(offers(uniById("warwick")!, courseById("medicine"))).toBe(false);
     expect(offers(uniById("leeds")!, courseById("medicine"))).toBe(true);
     expect(offers(uniById("imperial")!, courseById("law"))).toBe(false);
+  });
+  it("lists niche courses such as Planning & Real Estate at Manchester", () => {
+    expect(offers(uniById("manchester")!, courseById("planning"))).toBe(true);
+    expect(matchesCourse(courseById("planning"), "real estate")).toBe(true);
+  });
+  it("offers every course somewhere", () => {
+    for (const c of COURSES) expect(UNIVERSITIES.some((u) => offers(u, c)), c.id).toBe(true);
   });
   it("flags missing Chemistry for medicine", () => {
     const checks = checkReqs(courseById("medicine"), ["biology", "maths", "physics"]);

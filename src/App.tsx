@@ -13,6 +13,7 @@ import Apply from "./sections/Apply";
 import International from "./sections/International";
 import Sources from "./sections/Sources";
 import UniDetail from "./components/UniDetail";
+import type { CourseId } from "./data/courses";
 
 export type Tab =
   | "home" | "plan" | "universities" | "courses" | "careers" | "quals" | "fees" | "calculator" | "apply" | "international" | "sources";
@@ -40,6 +41,7 @@ export default function App() {
   const { t, lang, setLang } = useLang();
   const [tab, setTab] = useState<Tab>(tabFromHash);
   const [uniOpen, setUniOpen] = useState<string | null>(null);
+  const [courseFocus, setCourseFocus] = useState<CourseId | null>(null);
 
   useEffect(() => {
     const onHash = () => setTab(tabFromHash());
@@ -48,11 +50,17 @@ export default function App() {
   }, []);
 
   const go = (next: Tab) => {
+    if (next !== "courses") setCourseFocus(null);
     window.location.hash = next === "home" ? "" : next;
     setTab(next);
     window.scrollTo({ top: 0 });
   };
   const closeUni = useCallback(() => setUniOpen(null), []);
+  const openCourse = (c: CourseId) => {
+    setUniOpen(null);
+    setCourseFocus(c);
+    go("courses");
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -77,7 +85,10 @@ export default function App() {
               <li key={x.id}>
                 <button
                   type="button"
-                  onClick={() => go(x.id)}
+                  onClick={() => {
+                    setCourseFocus(null);
+                    go(x.id);
+                  }}
                   aria-current={tab === x.id ? "page" : undefined}
                   className={`min-h-[44px] whitespace-nowrap rounded-xl px-3 text-sm font-medium transition ${
                     tab === x.id ? "bg-blue-50 text-blue-700" : x.id === "plan" ? "text-violet-700 hover:bg-violet-50" : "text-slate-600 hover:bg-slate-100"
@@ -95,7 +106,7 @@ export default function App() {
         {tab === "home" && <Home go={go} openUni={setUniOpen} />}
         {tab === "plan" && <Plan openUni={setUniOpen} />}
         {tab === "universities" && <Universities openUni={setUniOpen} />}
-        {tab === "courses" && <Courses openUni={setUniOpen} />}
+        {tab === "courses" && <Courses openUni={setUniOpen} focus={courseFocus} />}
         {tab === "careers" && <Careers />}
         {tab === "quals" && <Qualifications />}
         {tab === "fees" && <Fees />}
@@ -105,7 +116,7 @@ export default function App() {
         {tab === "sources" && <Sources />}
       </main>
 
-      {uniOpen && <UniDetail id={uniOpen} onClose={closeUni} />}
+      {uniOpen && <UniDetail id={uniOpen} onClose={closeUni} onOpenCourse={openCourse} />}
 
       <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-500">
