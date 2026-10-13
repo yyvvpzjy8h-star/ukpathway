@@ -3,7 +3,7 @@ import { gbp, useLang, type L } from "../i18n";
 import { HOME_FEE, STUDENT_FINANCE } from "../data/facts";
 import { UNIVERSITIES } from "../data/universities";
 import { Callout, Card, ExtLink, FeeStatusPill, SectionTitle } from "../components/ui";
-import { intlFeeText } from "./Universities";
+import { homeFeeText, intlFeeText } from "../components/UniDetail";
 
 type Answer = "yes" | "no" | null;
 
@@ -80,7 +80,7 @@ function FeeStatusChecker() {
             setResident,
           )}
         {result && <Callout tone={result.tone}>{t(result.text)}</Callout>}
-        <ExtLink href="https://www.ukcisa.org.uk/student-advice/fees-and-money/england-fee-status/">
+        <ExtLink href="https://www.ukcisa.org.uk/">
           {t({ en: "UKCISA: England fee status rules", zh: "UKCISA：英格兰学费身份规则" })}
         </ExtLink>
       </div>
@@ -166,7 +166,7 @@ export default function Fees() {
                     <div className="font-normal text-slate-500">{u.zhName}</div>
                   </td>
                   <td className="p-3">
-                    {u.nation === "Scotland" ? t({ en: "£0 / £9,535*", zh: "£0 / £9,535*" }) : gbp(HOME_FEE.england2627)}
+                    {u.nation === "Scotland" ? t({ en: "£0 / £9,535*", zh: "£0 / £9,535*" }) : homeFeeText(u, t)}
                   </td>
                   <td className="p-3">
                     <div className="font-medium">{intlFeeText(u, t)}</div>
@@ -175,7 +175,7 @@ export default function Fees() {
                     </div>
                   </td>
                   <td className="p-3">
-                    <ExtLink href={u.feesUrl}>{t({ en: "Official", zh: "官网" })}</ExtLink>
+                    <ExtLink href={u.feesUrl ?? u.website}>{t({ en: "Official", zh: "官网" })}</ExtLink>
                   </td>
                 </tr>
               ))}

@@ -56,16 +56,23 @@ export const KEY_DATES: KeyDate[] = [
 export type Source = { label: string; url: string };
 
 export const SOURCES: Source[] = [
-  { label: "UCAS – when to apply (2027 entry)", url: "https://www.ucas.com/undergraduate/applying-university/ucas-undergraduate-when-apply" },
-  { label: "UCAS – personal statement", url: "https://www.ucas.com/undergraduate/applying-to-university/writing-your-personal-statement" },
+  { label: "UCAS – filling in your application", url: "https://www.ucas.com/applying/applying-to-university/filling-in-your-ucas-application" },
+  { label: "UCAS – personal statement (2026 entry onwards)", url: "https://www.ucas.com/applying/applying-to-university/writing-your-personal-statement/how-to-write-your-personal-statement-for-2026-entry-onwards" },
+  { label: "UCAS – 2027 entry deadline (Oxford, Cambridge, Medicine)", url: "https://www.ucas.com/events/2027-entry-deadline-for-the-universities-of-oxford-and-cambridge-and-most-courses-in-medicine-475536" },
+  { label: "UAT-UK – ESAT / TMUA / TARA", url: "https://esat-tmua.ac.uk/" },
+  { label: "Oxford – admissions tests", url: "https://www.ox.ac.uk/admissions/undergraduate/applying-to-oxford/guide/admissions-tests" },
   { label: "GOV.UK – Student visa", url: "https://www.gov.uk/student-visa" },
   { label: "GOV.UK – Graduate visa", url: "https://www.gov.uk/graduate-visa" },
   { label: "GOV.UK – Student finance", url: "https://www.gov.uk/student-finance" },
   { label: "GOV.UK – Repaying your student loan", url: "https://www.gov.uk/repaying-your-student-loan" },
-  { label: "UKCISA – Fee status (England)", url: "https://www.ukcisa.org.uk/student-advice/fees-and-money/england-fee-status/" },
+  { label: "UKCISA – fees and fee status", url: "https://www.ukcisa.org.uk/" },
   { label: "SAAS – Scottish students' tuition", url: "https://www.saas.gov.uk/" },
-  { label: "Discover Uni – course & graduate outcome data", url: "https://discoveruni.gov.uk/" },
-  { label: "UAT-UK – ESAT / TMUA / TARA", url: "https://www.uat-uk.org/" },
-  { label: "QS World University Rankings 2027", url: "https://www.topuniversities.com/world-university-rankings" },
+  { label: "Discover Uni – course & graduate data", url: "https://discoveruni.gov.uk/" },
+  { label: "QS World University Rankings", url: "https://www.topuniversities.com/world-university-rankings" },
   { label: "Universities UK – international student levy", url: "https://www.universitiesuk.ac.uk/topics/international/understanding-uks-new-levy-universities" },
 ];
+
+export const HERO_PHOTO = {
+  file: "Imperial_College_London_graduation_gowns.jpg",
+  author: "Imperial College London / Stewart Oak",
+};

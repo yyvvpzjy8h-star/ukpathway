@@ -29,7 +29,7 @@ export default function Calculator() {
   const [uniId, setUniId] = useState(UNIVERSITIES[0].id);
   const uni = UNIVERSITIES.find((u) => u.id === uniId)!;
   const [status, setStatus] = useState<Status>("home");
-  const [tuition, setTuition] = useState(homeFeeFor(uni, false));
+  const [tuition, setTuition] = useState(homeFeeFor(uni, false) ?? 9535);
   const [years, setYears] = useState(uni.degreeYears);
   const [feeRise, setFeeRise] = useState(3);
   const [rent, setRent] = useState(uni.london ? 230 : 170);
@@ -40,7 +40,7 @@ export default function Calculator() {
 
   const resetFor = (id: string, s: Status) => {
     const u = UNIVERSITIES.find((x) => x.id === id)!;
-    setTuition(s === "intl" ? u.calcIntlDefault : homeFeeFor(u, s === "scottish"));
+    setTuition(s === "intl" ? u.calcIntlDefault : (homeFeeFor(u, s === "scottish") ?? 9535));
     setYears(u.degreeYears);
     setRent(u.london ? 230 : 170);
     setLiving(u.london ? 600 : 500);

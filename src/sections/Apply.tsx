@@ -94,7 +94,7 @@ export default function Apply() {
           ))}
         </div>
         <div className="mt-2">
-          <ExtLink href="https://www.uat-uk.org/">UAT-UK (ESAT / TMUA / TARA)</ExtLink>
+          <ExtLink href="https://esat-tmua.ac.uk/">UAT-UK (ESAT / TMUA / TARA)</ExtLink>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export default function Apply() {
           ))}
         </ol>
         <div className="mt-3">
-          <ExtLink href="https://www.ucas.com/undergraduate/applying-to-university/writing-your-personal-statement">
+          <ExtLink href="https://www.ucas.com/applying/applying-to-university/writing-your-personal-statement/how-to-write-your-personal-statement-for-2026-entry-onwards">
             {t({ en: "UCAS guidance", zh: "UCAS 官方指南" })}
           </ExtLink>
         </div>
